@@ -1,0 +1,135 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Nova Disciplina | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📚 Cadastrar disciplina</h2>
+    <p>Organize suas matérias e mantenha as informações acadêmicas em um só lugar.</p>
+</section>
+
+<section class="activities">
+
+    <div class="form-header">
+        <h3>Informações da disciplina</h3>
+        <p>Preencha os campos abaixo para adicionar uma nova disciplina.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div>
+            <label for="nome">Nome da disciplina</label>
+            <input
+                type="text"
+                id="nome"
+                name="nome"
+                placeholder="Ex: Desenvolvimento Web"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="professor">Nome do professor</label>
+            <input
+                type="text"
+                id="professor"
+                name="professor"
+                placeholder="Ex: João da Silva"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="codigo">Código da disciplina</label>
+            <input
+                type="text"
+                id="codigo"
+                name="codigo"
+                placeholder="Ex: ADS101"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="semestre">Semestre</label>
+            <input
+                type="text"
+                id="semestre"
+                name="semestre"
+                placeholder="Ex: 2026.2"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="descricao">Descrição</label>
+            <textarea
+                id="descricao"
+                name="descricao"
+                rows="5"
+                placeholder="Adicione informações importantes sobre a disciplina..."
+            ></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                ✓ Salvar disciplina
+            </button>
+
+            <a href="{% url 'disciplinas' %}" class="btn-secondary">
+                Voltar
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+<style>
+    .form-header {
+        margin-bottom: 28px;
+    }
+
+    .form-header h3 {
+        color: #172554;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        color: #718096;
+        font-size: 14px;
+    }
+
+    .activities form .form-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .activities form .form-actions button,
+    .activities form .form-actions a {
+        margin: 0;
+        text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+        .activities form .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .activities form .form-actions button,
+        .activities form .form-actions a {
+            text-align: center;
+            width: 100%;
+        }
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Cadastrar Nota | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📊 Cadastrar Nota</h2>
+    <p>Registre uma avaliação e acompanhe seu desempenho acadêmico.</p>
+</section>
+
+<section class="activities">
+
+    <div class="activity-card">
+
+        {% if erro %}
+            <div class="alert alert-danger">
+                {{ erro }}
+            </div>
+        {% endif %}
+
+        {% if disciplinas %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="titulo">Nome da avaliação</label>
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    placeholder="Ex.: Prova 1, Trabalho, Seminário..."
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="disciplina">Disciplina</label>
+                <select id="disciplina" name="disciplina" required>
+                    <option value="">Selecione uma disciplina</option>
+
+                    {% for disciplina in disciplinas %}
+                    <option value="{{ disciplina.id }}">
+                        {{ disciplina.nome }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="valor">Nota (0 a 10)</label>
+                <input
+                    type="number"
+                    id="valor"
+                    name="valor"
+                    min="0"
+                    max="10"
+                    step="0.01"
+                    placeholder="Ex.: 8.50"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="peso">Peso da avaliação</label>
+                <input
+                    type="number"
+                    id="peso"
+                    name="peso"
+                    min="0.01"
+                    step="0.01"
+                    value="1.00"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="data_avaliacao">Data da avaliação</label>
+                <input
+                    type="date"
+                    id="data_avaliacao"
+                    name="data_avaliacao"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição (opcional)</label>
+                <textarea
+                    id="descricao"
+                    name="descricao"
+                    rows="4"
+                    placeholder="Adicione observações sobre a avaliação..."
+                ></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+
+                <button type="submit" class="btn-primary">
+                    Salvar nota
+                </button>
+
+                <a href="{% url 'notas' %}" class="btn-secondary">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+        {% else %}
+
+        <h3>Nenhuma disciplina cadastrada</h3>
+
+        <p>
+            Antes de cadastrar uma nota, você precisa cadastrar pelo menos uma disciplina.
+        </p>
+
+        <a href="{% url 'cadastrar_disciplina' %}" class="btn-primary">
+            Cadastrar disciplina
+        </a>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endblock %}

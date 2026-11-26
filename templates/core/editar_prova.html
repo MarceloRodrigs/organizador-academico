@@ -1,0 +1,139 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Editar Prova | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>✏️ Editar prova</h2>
+    <p>Atualize as informações da sua avaliação acadêmica.</p>
+</section>
+
+<section class="activities">
+
+    <div class="form-header">
+        <h3>Informações da avaliação</h3>
+        <p>Modifique os campos que deseja atualizar.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div>
+            <label for="titulo">Nome da prova</label>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                value="{{ prova.titulo }}"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="disciplina">Disciplina</label>
+            <select id="disciplina" name="disciplina" required>
+                <option value="">Selecione uma disciplina</option>
+
+                {% for disciplina in disciplinas %}
+                    <option
+                        value="{{ disciplina.id }}"
+                        {% if prova.disciplina_id == disciplina.id %}selected{% endif %}
+                    >
+                        {{ disciplina.nome }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <div>
+            <label for="data_prova">Data da prova</label>
+            <input
+                type="date"
+                id="data_prova"
+                name="data_prova"
+                value="{{ prova.data_prova|date:'Y-m-d' }}"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="horario">Horário</label>
+            <input
+                type="time"
+                id="horario"
+                name="horario"
+                value="{{ prova.horario|time:'H:i' }}"
+            >
+        </div>
+
+        <div>
+            <label for="descricao">Conteúdo da prova</label>
+            <textarea
+                id="descricao"
+                name="descricao"
+                rows="5"
+            >{{ prova.descricao }}</textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                ✓ Salvar alterações
+            </button>
+
+            <a href="{% url 'provas' %}" class="btn-secondary">
+                Voltar
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+<style>
+    .form-header {
+        margin-bottom: 28px;
+    }
+
+    .form-header h3 {
+        color: #172554;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        color: #718096;
+        font-size: 14px;
+    }
+
+    .activities form .form-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .activities form .form-actions button,
+    .activities form .form-actions a {
+        margin: 0;
+        text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+        .activities form .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .activities form .form-actions button,
+        .activities form .form-actions a {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+{% endblock %}

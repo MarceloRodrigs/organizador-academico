@@ -1,0 +1,269 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Disciplinas | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📚 Minhas Disciplinas</h2>
+    <p>Organize suas matérias e acompanhe suas informações acadêmicas.</p>
+</section>
+
+<section class="activities">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+
+        <div>
+            <h2>Minhas matérias</h2>
+            <p style="color: #718096;">
+                {{ disciplinas|length }} disciplina(s) cadastrada(s)
+            </p>
+        </div>
+
+        <a href="{% url 'cadastrar_disciplina' %}" class="btn-primary">
+            + Nova disciplina
+        </a>
+
+    </div>
+
+    <div class="disciplinas-grid">
+
+        {% for disciplina in disciplinas %}
+
+            <div class="card disciplina-card">
+
+                <div class="disciplina-card-header">
+                    <div class="disciplina-icon">
+                        📚
+                    </div>
+
+                    <span class="disciplina-status">
+                        Cadastrada
+                    </span>
+                </div>
+
+                <h3>{{ disciplina.nome }}</h3>
+
+                <p class="disciplina-professor">
+                    👨‍🏫 {{ disciplina.professor }}
+                </p>
+
+                {% if disciplina.descricao %}
+                    <p class="disciplina-descricao">
+                        {{ disciplina.descricao }}
+                    </p>
+                {% endif %}
+
+                <div class="disciplina-informacoes">
+
+                    <span>
+                        Código: <strong>{{ disciplina.codigo }}</strong>
+                    </span>
+
+                    <span>
+                        Semestre: <strong>{{ disciplina.semestre }}</strong>
+                    </span>
+
+                </div>
+
+                <div class="disciplina-acoes">
+
+                    <a href="{% url 'editar_disciplina' disciplina.id %}" class="btn-editar-disciplina">
+                        ✏️ Editar
+                    </a>
+
+                    <form method="POST"
+                          action="{% url 'excluir_disciplina' disciplina.id %}"
+                          onsubmit="return confirm('Tem certeza de que deseja excluir esta disciplina? As provas vinculadas a ela também serão excluídas.');">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn-excluir-disciplina">
+                            🗑️ Excluir
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="disciplinas-vazio">
+
+                <div style="font-size: 45px; margin-bottom: 15px;">
+                    📚
+                </div>
+
+                <h3>Nenhuma disciplina cadastrada</h3>
+
+                <p>
+                    Comece adicionando sua primeira disciplina
+                    ao organizador acadêmico.
+                </p>
+
+                <a href="{% url 'cadastrar_disciplina' %}" class="btn-primary">
+                    Cadastrar primeira disciplina
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<style>
+
+.disciplinas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.disciplina-card {
+    border-top: 4px solid #d4a94f;
+}
+
+.disciplina-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.disciplina-icon {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5e7c5;
+    border-radius: 12px;
+    font-size: 22px;
+}
+
+.disciplina-status {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.disciplina-card h3 {
+    font-size: 19px;
+    margin-bottom: 12px;
+    color: #172554;
+}
+
+.disciplina-professor {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.disciplina-descricao {
+    color: #718096;
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.disciplina-informacoes {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    border-top: 1px solid #e5e9f2;
+    padding-top: 15px;
+    margin-top: 15px;
+    font-size: 12px;
+    color: #718096;
+}
+
+.disciplina-informacoes strong {
+    color: #172554;
+}
+
+.disciplina-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.disciplina-acoes form {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+}
+
+.btn-editar-disciplina,
+.btn-excluir-disciplina {
+    display: inline-block;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-editar-disciplina {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.btn-editar-disciplina:hover {
+    background: #c7d2fe;
+}
+
+.btn-excluir-disciplina {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-excluir-disciplina:hover {
+    background: #fecaca;
+}
+
+.disciplinas-vazio {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    background: #f9faff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 15px;
+}
+
+.disciplinas-vazio h3 {
+    color: #172554;
+    margin-bottom: 10px;
+}
+
+.disciplinas-vazio p {
+    color: #718096;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+    .disciplina-acoes {
+        flex-direction: column;
+    }
+
+    .disciplina-acoes a,
+    .disciplina-acoes form,
+    .disciplina-acoes button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+</style>
+
+{% endblock %}

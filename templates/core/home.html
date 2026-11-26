@@ -1,0 +1,450 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}
+Início | Organizador Acadêmico
+{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>Bem-vindo ao seu espaço acadêmico! 🎓</h2>
+    <p>
+        Organize seus estudos, acompanhe suas atividades
+        e alcance seus objetivos.
+    </p>
+</section>
+
+<!-- RESUMO ACADÊMICO -->
+
+<section class="dashboard">
+
+    <div class="card" style="border-top: 4px solid #d4a94f;">
+        <h3>📚 Disciplinas</h3>
+        <p style="color: #172554;">{{ total_disciplinas }}</p>
+        <span>Disciplinas cadastradas</span>
+    </div>
+
+    <div class="card" style="border-top: 4px solid #2563eb;">
+        <h3>✓ Tarefas</h3>
+        <p style="color: #2563eb;">{{ total_tarefas_cadastradas }}</p>
+        <span>Total de atividades</span>
+    </div>
+
+    <div class="card" style="border-top: 4px solid #9333ea;">
+        <h3>📝 Provas</h3>
+        <p style="color: #9333ea;">{{ total_provas }}</p>
+        <span>Avaliações cadastradas</span>
+    </div>
+
+</section>
+
+<!-- DESEMPENHO NAS ATIVIDADES -->
+
+<section class="activities">
+
+    <h2>📊 Meu desempenho acadêmico</h2>
+
+    <section class="dashboard">
+
+        <div class="card">
+            <h3>✅ Tarefas concluídas</h3>
+            <p style="color: #16a34a;">{{ tarefas_concluidas }}</p>
+            <span>Atividades finalizadas</span>
+        </div>
+
+        <div class="card">
+            <h3>⏳ Tarefas pendentes</h3>
+            <p style="color: #d97706;">{{ total_tarefas }}</p>
+            <span>Atividades para realizar</span>
+        </div>
+
+        <div class="card">
+            <h3>🏆 Progresso</h3>
+            <p style="color: #16a34a;">{{ percentual_conclusao }}%</p>
+            <span>Percentual de conclusão</span>
+        </div>
+
+    </section>
+
+    <div style="margin-top: 25px;">
+
+        <h3>Progresso das atividades</h3>
+
+        <div style="background: #e5e7eb; width: 100%; height: 18px; border-radius: 20px; overflow: hidden; margin-top: 12px;">
+
+            <div style="
+                background: linear-gradient(90deg, #16a34a, #4ade80);
+                width: {{ percentual_conclusao }}%;
+                height: 100%;
+                border-radius: 20px;
+                transition: width 0.5s ease;
+            "></div>
+
+        </div>
+
+        <p style="margin-top: 10px;">
+            Você concluiu {{ percentual_conclusao }}% das suas tarefas.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- DESEMPENHO NAS AVALIAÇÕES -->
+
+<section class="activities">
+
+    <h2>🎓 Desempenho nas avaliações</h2>
+
+    <p style="margin-bottom: 20px;">
+        Acompanhe suas notas e médias acadêmicas.
+    </p>
+
+    <section class="dashboard">
+
+        <div class="card" style="border-top: 4px solid #2563eb;">
+            <h3>📊 Média geral</h3>
+
+            <p style="color: #2563eb;">
+                {{ media_geral|floatformat:2 }}
+            </p>
+
+            <span>Média ponderada de todas as avaliações</span>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #9333ea;">
+            <h3>📝 Avaliações</h3>
+
+            <p style="color: #9333ea;">
+                {{ total_notas }}
+            </p>
+
+            <span>Notas cadastradas</span>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #16a34a;">
+            <h3>🏆 Melhor desempenho</h3>
+
+            {% if melhor_desempenho %}
+
+                <p style="color: #16a34a;">
+                    {{ melhor_desempenho.media|floatformat:2 }}
+                </p>
+
+                <span>
+                    {{ melhor_desempenho.disciplina.nome }}
+                </span>
+
+            {% else %}
+
+                <p style="color: #6b7280;">--</p>
+                <span>Nenhuma avaliação cadastrada</span>
+
+            {% endif %}
+        </div>
+
+    </section>
+
+    {% if medias_disciplinas %}
+
+    <!-- GRÁFICO DE DESEMPENHO -->
+
+    <div class="card" style="margin-top: 25px; padding: 25px;">
+
+        <h3>📈 Gráfico de desempenho por disciplina</h3>
+
+        <p style="margin-top: 8px; margin-bottom: 25px; color: #64748b;">
+            Comparação visual das médias ponderadas, considerando uma escala de 0 a 10.
+        </p>
+
+        {% for item in medias_disciplinas %}
+
+        <div style="margin-bottom: 22px;">
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 8px;
+                flex-wrap: wrap;
+            ">
+
+                <strong>{{ item.disciplina.nome }}</strong>
+
+                <strong style="color: #2563eb;">
+                    {{ item.media|floatformat:2 }} / 10
+                </strong>
+
+            </div>
+
+            <div style="
+                width: 100%;
+                height: 24px;
+                background: #e5e7eb;
+                border-radius: 8px;
+                overflow: hidden;
+            ">
+
+                <div style="
+                    width: {% widthratio item.media 10 100 %}%;
+                    height: 100%;
+                    background: linear-gradient(90deg, #172554, #3b82f6);
+                    border-radius: 8px;
+                    transition: width 0.6s ease;
+                "></div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 5px;
+        ">
+            <span>0</span>
+            <span>2</span>
+            <span>4</span>
+            <span>6</span>
+            <span>8</span>
+            <span>10</span>
+        </div>
+
+    </div>
+
+    <!-- MÉDIAS POR DISCIPLINA -->
+
+    <div style="margin-top: 25px;">
+
+        <h3>📚 Médias por disciplina</h3>
+
+        {% for item in medias_disciplinas %}
+
+        <div class="card" style="margin-top: 12px;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+
+                <strong>{{ item.disciplina.nome }}</strong>
+
+                <strong style="color: #2563eb;">
+                    {{ item.media|floatformat:2 }} / 10
+                </strong>
+
+            </div>
+
+            <div style="background: #e5e7eb; width: 100%; height: 12px; border-radius: 20px; overflow: hidden; margin-top: 12px;">
+
+                <div style="
+                    background: linear-gradient(90deg, #2563eb, #60a5fa);
+                    width: {% widthratio item.media 10 100 %}%;
+                    height: 100%;
+                    border-radius: 20px;
+                "></div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="card" style="margin-top: 20px;">
+        <p>Você ainda não possui notas cadastradas.</p>
+
+        <p style="margin-top: 8px;">
+            Cadastre suas avaliações para acompanhar seu desempenho.
+        </p>
+    </div>
+
+    {% endif %}
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'notas' %}" class="btn-primary">
+            Visualizar todas as notas
+        </a>
+    </div>
+
+</section>
+
+<!-- CENTRAL DE NOTIFICAÇÕES -->
+
+<section class="activities">
+
+    <h2>🔔 Central de notificações</h2>
+
+    <p style="margin-bottom: 20px;">
+        Confira os avisos importantes sobre suas atividades acadêmicas.
+    </p>
+
+    <section class="dashboard">
+
+        <div class="card" style="border-left: 5px solid #dc2626;">
+            <h3>⚠️ Tarefas atrasadas</h3>
+            <p style="color: #dc2626;">
+                {{ tarefas_atrasadas|length }}
+            </p>
+            <span>Precisam de atenção</span>
+        </div>
+
+        <div class="card" style="border-left: 5px solid #2563eb;">
+            <h3>📚 Tarefas próximas</h3>
+            <p style="color: #2563eb;">
+                {{ tarefas_proximas|length }}
+            </p>
+            <span>Vencem nos próximos 7 dias</span>
+        </div>
+
+        <div class="card" style="border-left: 5px solid #d97706;">
+            <h3>📝 Provas próximas</h3>
+            <p style="color: #d97706;">
+                {{ provas_proximas|length }}
+            </p>
+            <span>Nos próximos 7 dias</span>
+        </div>
+
+    </section>
+
+    <div style="margin-top: 25px;">
+
+        <h3>Detalhes dos avisos</h3>
+
+        <!-- TAREFAS ATRASADAS -->
+
+        <div style="margin-bottom: 25px;">
+
+            <h3 style="color: #dc2626; margin-top: 15px;">
+                ⚠️ Tarefas atrasadas
+            </h3>
+
+            {% for tarefa in tarefas_atrasadas %}
+
+                <div class="card" style="margin-top: 12px; border-left: 5px solid #dc2626;">
+
+                    <h3>{{ tarefa.titulo }}</h3>
+
+                    <p>Prazo: {{ tarefa.data_entrega|date:"d/m/Y" }}</p>
+
+                    <p>
+                        Disciplina:
+                        {% if tarefa.disciplina %}
+                            {{ tarefa.disciplina.nome }}
+                        {% else %}
+                            Não informada
+                        {% endif %}
+                    </p>
+
+                    <a href="{% url 'editar_tarefa' tarefa.id %}" class="btn-secondary">
+                        Atualizar tarefa
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <p>Você não possui tarefas atrasadas. Muito bem!</p>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- TAREFAS PRÓXIMAS -->
+
+        <div style="margin-bottom: 25px;">
+
+            <h3 style="color: #2563eb;">
+                📚 Tarefas próximas
+            </h3>
+
+            {% for tarefa in tarefas_proximas %}
+
+                <div class="card" style="margin-top: 12px; border-left: 5px solid #2563eb;">
+
+                    <h3>{{ tarefa.titulo }}</h3>
+
+                    <p>
+                        Data de entrega:
+                        {{ tarefa.data_entrega|date:"d/m/Y" }}
+                    </p>
+
+                    <p>
+                        Disciplina:
+                        {% if tarefa.disciplina %}
+                            {{ tarefa.disciplina.nome }}
+                        {% else %}
+                            Não informada
+                        {% endif %}
+                    </p>
+
+                </div>
+
+            {% empty %}
+
+                <p>Não existem tarefas com vencimento nos próximos 7 dias.</p>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- PROVAS PRÓXIMAS -->
+
+        <div>
+
+            <h3 style="color: #b45309;">
+                📝 Próximas provas
+            </h3>
+
+            {% for prova in provas_proximas %}
+
+                <div class="card" style="margin-top: 12px; border-left: 5px solid #d97706;">
+
+                    <h3>{{ prova.titulo }}</h3>
+
+                    <p>
+                        Data: {{ prova.data_prova|date:"d/m/Y" }}
+                    </p>
+
+                    <p>
+                        Horário:
+                        {% if prova.horario %}
+                            {{ prova.horario|time:"H:i" }}
+                        {% else %}
+                            Não informado
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        Disciplina: {{ prova.disciplina.nome }}
+                    </p>
+
+                </div>
+
+            {% empty %}
+
+                <p>Não existem provas nos próximos 7 dias.</p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="activities">
+    <h2>📌 Minhas atividades</h2>
+    <p>
+        Acompanhe suas tarefas e avaliações pelo menu lateral.
+    </p>
+</section>
+
+{% endblock %}
+

@@ -1,0 +1,95 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Organizador Acadêmico{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <h2>🎓 Organizador</h2>
+                <span>PAINEL ACADÊMICO</span>
+            </div>
+
+            <nav>
+
+                <a href="{% url 'home' %}"
+                   class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    ⌂ Início
+                </a>
+
+                <a href="{% url 'disciplinas' %}"
+                   class="{% if 'disciplina' in request.resolver_match.url_name %}active{% endif %}">
+                    📚 Disciplinas
+                </a>
+
+                <a href="{% url 'tarefas' %}"
+                   class="{% if 'tarefa' in request.resolver_match.url_name %}active{% endif %}">
+                    ✓ Tarefas
+                </a>
+
+                <a href="{% url 'provas' %}"
+                   class="{% if 'prova' in request.resolver_match.url_name %}active{% endif %}">
+                    📝 Provas
+                </a>
+
+                <a href="{% url 'calendario' %}"
+                   class="{% if request.resolver_match.url_name == 'calendario' %}active{% endif %}">
+                    ▦ Calendário
+                </a>
+
+                <a href="{% url 'anotacoes' %}"
+                   class="{% if 'anotacao' in request.resolver_match.url_name %}active{% endif %}">
+                    📖 Anotações
+                </a>
+
+                <a href="{% url 'notas' %}"
+                   class="{% if 'nota' in request.resolver_match.url_name %}active{% endif %}">
+                    📊 Notas
+                </a>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                Seu espaço de estudos.
+            </div>
+
+        </aside>
+
+        <div class="main-content">
+
+            <header>
+                <h1>Organizador Acadêmico</h1>
+            </header>
+
+            <main>
+
+                {% block content %}
+                {% endblock %}
+
+            </main>
+
+            <footer>
+                Organizador Acadêmico © 2026
+            </footer>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

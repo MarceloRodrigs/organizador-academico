@@ -1,0 +1,469 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Minhas Anotações | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📖 Minhas Anotações</h2>
+    <p>Seu espaço para registrar ideias, resumos e conhecimentos importantes.</p>
+</section>
+
+<section class="activities">
+
+    <div class="anotacoes-header">
+
+        <div>
+            <h2>Minha biblioteca de anotações</h2>
+            <p>{{ anotacoes|length }} anotação(ões) encontrada(s)</p>
+        </div>
+
+        <a href="{% url 'cadastrar_anotacao' %}" class="btn-primary">
+            + Nova anotação
+        </a>
+
+    </div>
+
+    <!-- PESQUISA -->
+
+    <form method="GET" class="anotacoes-pesquisa">
+
+        <div class="pesquisa-campo">
+            <span>🔎</span>
+
+            <input
+                type="text"
+                name="q"
+                value="{{ termo }}"
+                placeholder="Pesquisar por título ou conteúdo..."
+            >
+        </div>
+
+        <button type="submit" class="pesquisa-botao">
+            Pesquisar
+        </button>
+
+        {% if termo %}
+            <a href="{% url 'anotacoes' %}" class="limpar-pesquisa">
+                Limpar
+            </a>
+        {% endif %}
+
+    </form>
+
+    <!-- LISTA DE ANOTAÇÕES -->
+
+    <div class="anotacoes-grid">
+
+        {% for anotacao in anotacoes %}
+
+            <article class="card anotacao-card">
+
+                <div class="anotacao-topo">
+
+                    <div class="anotacao-icone">📖</div>
+
+                    <span class="anotacao-etiqueta">
+                        Anotação
+                    </span>
+
+                </div>
+
+                <h3>{{ anotacao.titulo }}</h3>
+
+                <div class="anotacao-conteudo">
+                    {{ anotacao.conteudo|linebreaksbr }}
+                </div>
+
+                <div class="anotacao-informacoes">
+
+                    <div>
+                        <span>📚 Disciplina</span>
+
+                        <strong>
+                            {% if anotacao.disciplina %}
+                                {{ anotacao.disciplina.nome }}
+                            {% else %}
+                                Não informada
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>🕒 Data de criação</span>
+
+                        <strong>
+                            {{ anotacao.data_criacao|date:"d/m/Y H:i" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="anotacao-acoes">
+
+                    <a href="{% url 'editar_anotacao' anotacao.id %}"
+                       class="anotacao-editar">
+                        ✎ Editar
+                    </a>
+
+                    <form method="POST"
+                          action="{% url 'excluir_anotacao' anotacao.id %}">
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="anotacao-excluir"
+                            onclick="return confirm('Tem certeza que deseja excluir esta anotação?');"
+                        >
+                            Excluir
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <div class="anotacoes-vazio">
+
+                <div style="font-size: 45px; margin-bottom: 15px;">
+                    📖
+                </div>
+
+                {% if termo %}
+
+                    <h3>Nenhuma anotação encontrada</h3>
+
+                    <p>
+                        Não encontramos resultados para "{{ termo }}".
+                    </p>
+
+                    <a href="{% url 'anotacoes' %}" class="btn-primary">
+                        Limpar pesquisa
+                    </a>
+
+                {% else %}
+
+                    <h3>Sua biblioteca está vazia</h3>
+
+                    <p>
+                        Comece registrando seus primeiros resumos,
+                        ideias e conteúdos importantes.
+                    </p>
+
+                    <a href="{% url 'cadastrar_anotacao' %}" class="btn-primary">
+                        + Criar primeira anotação
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<style>
+
+/* CABEÇALHO */
+
+.anotacoes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.anotacoes-header h2 {
+    color: #172554;
+    margin-bottom: 5px;
+}
+
+.anotacoes-header p {
+    color: #718096;
+    font-size: 13px;
+}
+
+/* PESQUISA */
+
+.anotacoes-pesquisa {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.pesquisa-campo {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 12px;
+    min-width: 180px;
+    height: 54px;
+    padding: 0 16px;
+    border: 1px solid #dce2ed;
+    border-radius: 12px;
+    background: #f9faff;
+    transition: 0.2s;
+}
+
+.pesquisa-campo:focus-within {
+    border-color: #d4a94f;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(212, 169, 79, 0.12);
+}
+
+.pesquisa-campo span {
+    font-size: 19px;
+    flex-shrink: 0;
+}
+
+/* CORREÇÃO DA BORDA DUPLICADA */
+
+.activities form.anotacoes-pesquisa .pesquisa-campo input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    padding: 0 4px;
+    margin: 0;
+    border: none !important;
+    border-radius: 0;
+    outline: none;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 14px;
+}
+
+.activities form.anotacoes-pesquisa .pesquisa-campo input:focus {
+    border: none !important;
+    outline: none;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.pesquisa-botao,
+.limpar-pesquisa {
+    padding: 13px 18px;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.pesquisa-botao {
+    background: #172554;
+    color: white;
+}
+
+.pesquisa-botao:hover {
+    background: #243b70;
+}
+
+.limpar-pesquisa {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* GRADE */
+
+.anotacoes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 20px;
+}
+
+/* CARTÕES */
+
+.anotacao-card {
+    display: flex;
+    flex-direction: column;
+    border-top: 4px solid #d4a94f;
+    padding: 22px;
+    min-width: 0;
+}
+
+.anotacao-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.anotacao-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: #f5e7c5;
+    border-radius: 12px;
+    font-size: 22px;
+}
+
+.anotacao-etiqueta {
+    background: #f5e7c5;
+    color: #8a6420;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.anotacao-card h3 {
+    color: #172554;
+    font-size: 18px;
+    margin-bottom: 13px;
+    overflow-wrap: anywhere;
+}
+
+/* CONTEÚDO */
+
+.anotacao-conteudo {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    margin-bottom: 20px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.anotacao-conteudo::-webkit-scrollbar {
+    width: 4px;
+}
+
+.anotacao-conteudo::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* INFORMAÇÕES */
+
+.anotacao-informacoes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid #e5e9f2;
+    padding-top: 15px;
+    margin-top: auto;
+    margin-bottom: 18px;
+}
+
+.anotacao-informacoes div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.anotacao-informacoes span {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.anotacao-informacoes strong {
+    color: #172554;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* BOTÕES */
+
+.anotacao-acoes {
+    display: flex;
+    gap: 10px;
+}
+
+.anotacao-acoes form {
+    margin: 0;
+}
+
+.anotacao-acoes a,
+.anotacao-acoes button {
+    display: inline-block;
+    padding: 10px 13px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.anotacao-editar {
+    background: #f5e7c5;
+    color: #172554;
+}
+
+.anotacao-editar:hover {
+    background: #d4a94f;
+}
+
+.anotacao-excluir {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.anotacao-excluir:hover {
+    background: #fecaca;
+}
+
+/* ESTADO VAZIO */
+
+.anotacoes-vazio {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    background: #f9faff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 15px;
+}
+
+.anotacoes-vazio h3 {
+    color: #172554;
+    margin-bottom: 10px;
+}
+
+.anotacoes-vazio p {
+    color: #718096;
+    margin-bottom: 20px;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 600px) {
+
+    .anotacoes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .anotacoes-pesquisa {
+        flex-wrap: wrap;
+    }
+
+    .pesquisa-campo {
+        flex-basis: 100%;
+    }
+
+    .pesquisa-botao,
+    .limpar-pesquisa {
+        text-align: center;
+    }
+
+}
+
+</style>
+
+{% endblock %}

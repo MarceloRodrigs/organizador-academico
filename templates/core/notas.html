@@ -1,0 +1,118 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Notas | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📊 Minhas Notas</h2>
+    <p>Acompanhe suas avaliações e médias por disciplina.</p>
+</section>
+
+<section class="activities">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 25px;">
+        <h2>Minhas avaliações</h2>
+
+        <a href="{% url 'cadastrar_nota' %}" class="btn-primary">
+            + Cadastrar nota
+        </a>
+    </div>
+
+    <div class="stats-grid">
+
+        {% for item in medias %}
+        <div class="stat-card">
+            <h3>{{ item.disciplina.nome }}</h3>
+            <p>Média ponderada</p>
+            <strong>{{ item.media|floatformat:2 }}</strong>
+        </div>
+        {% empty %}
+        <div class="activity-card">
+            <p>Nenhuma média disponível. Cadastre uma nota para começar.</p>
+        </div>
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<section class="activities">
+
+    <h2 style="margin-bottom: 20px;">Histórico de avaliações</h2>
+
+    {% for nota in notas %}
+
+    <div class="activity-card" style="margin-bottom: 15px;">
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; flex-wrap: wrap;">
+
+            <div>
+                <h3>{{ nota.titulo }}</h3>
+
+                <p>
+                    <strong>Disciplina:</strong>
+                    {{ nota.disciplina.nome }}
+                </p>
+
+                <p>
+                    <strong>Nota:</strong>
+                    {{ nota.valor|floatformat:2 }} / 10
+                </p>
+
+                <p>
+                    <strong>Peso:</strong>
+                    {{ nota.peso|floatformat:2 }}
+                </p>
+
+                <p>
+                    <strong>Data:</strong>
+                    {% if nota.data_avaliacao %}
+                        {{ nota.data_avaliacao|date:"d/m/Y" }}
+                    {% else %}
+                        Não informada
+                    {% endif %}
+                </p>
+
+                {% if nota.descricao %}
+                <p>{{ nota.descricao }}</p>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+                <a href="{% url 'editar_nota' nota.id %}" class="btn-secondary">
+                    Editar
+                </a>
+
+                <form method="POST"
+                      action="{% url 'excluir_nota' nota.id %}"
+                      onsubmit="return confirm('Tem certeza de que deseja excluir esta nota?');">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="btn-danger">
+                        Excluir
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <div class="activity-card">
+        <p>Você ainda não cadastrou nenhuma nota.</p>
+        <p>Comece cadastrando sua primeira avaliação!</p>
+    </div>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}

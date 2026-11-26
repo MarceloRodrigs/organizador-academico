@@ -1,0 +1,378 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Calendário | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📅 Calendário Acadêmico</h2>
+    <p>Acompanhe suas tarefas, provas e compromissos acadêmicos ao longo do mês.</p>
+</section>
+
+<section class="activities">
+
+    <!-- CABEÇALHO -->
+
+    <div class="calendario-header">
+
+        <a href="{% url 'calendario' %}?mes={{ mes_anterior }}&ano={{ ano_anterior }}"
+           class="calendario-navegacao">
+            ← Anterior
+        </a>
+
+        <div class="calendario-titulo">
+            <h2>{{ nome_mes }} de {{ ano }}</h2>
+            <span>Planejamento mensal</span>
+        </div>
+
+        <a href="{% url 'calendario' %}?mes={{ mes_seguinte }}&ano={{ ano_seguinte }}"
+           class="calendario-navegacao">
+            Próximo →
+        </a>
+
+    </div>
+
+    <!-- LEGENDA -->
+
+    <div class="calendario-legenda">
+
+        <span>
+            <i class="legenda-cor tarefa-cor"></i>
+            Tarefas
+        </span>
+
+        <span>
+            <i class="legenda-cor prova-cor"></i>
+            Provas
+        </span>
+
+        <span>
+            <i class="legenda-cor hoje-cor"></i>
+            Hoje
+        </span>
+
+    </div>
+
+    <!-- CALENDÁRIO -->
+
+    <div class="calendario-container">
+
+        <table class="calendario-tabela">
+
+            <thead>
+                <tr>
+                    <th>Dom</th>
+                    <th>Seg</th>
+                    <th>Ter</th>
+                    <th>Qua</th>
+                    <th>Qui</th>
+                    <th>Sex</th>
+                    <th>Sáb</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for semana in semanas %}
+
+                    <tr>
+
+                        {% for dia in semana %}
+
+                            {% if dia %}
+
+                                <td class="{% if dia.hoje %}dia-hoje{% endif %}">
+
+                                    <div class="dia-numero">
+                                        {% if dia.hoje %}
+                                            <span class="numero-hoje">{{ dia.numero }}</span>
+                                        {% else %}
+                                            <span>{{ dia.numero }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="eventos-dia">
+
+                                        {% for tarefa in dia.tarefas %}
+
+                                            <div class="evento evento-tarefa"
+                                                 title="Tarefa: {{ tarefa.titulo }}">
+                                                <span>✓</span>
+                                                {{ tarefa.titulo }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                        {% for prova in dia.provas %}
+
+                                            <div class="evento evento-prova"
+                                                 title="Prova: {{ prova.titulo }}">
+                                                <span>●</span>
+                                                {{ prova.titulo }}
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+                                </td>
+
+                            {% else %}
+
+                                <td class="dia-vazio"></td>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- INFORMAÇÃO -->
+
+    <div class="calendario-rodape">
+        <span>📚</span>
+        <p>Organize seus compromissos e mantenha seus estudos em dia.</p>
+    </div>
+
+</section>
+
+<style>
+
+/* CABEÇALHO DO CALENDÁRIO */
+
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.calendario-titulo {
+    text-align: center;
+}
+
+.calendario-titulo h2 {
+    color: #172554;
+    font-size: 23px;
+    margin-bottom: 5px;
+}
+
+.calendario-titulo span {
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.calendario-navegacao {
+    background: #f5e7c5;
+    color: #172554;
+    padding: 11px 16px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.calendario-navegacao:hover {
+    background: #d4a94f;
+}
+
+/* LEGENDA */
+
+.calendario-legenda {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.calendario-legenda span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.legenda-cor {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.tarefa-cor {
+    background: #3b82f6;
+}
+
+.prova-cor {
+    background: #ef4444;
+}
+
+.hoje-cor {
+    background: #d4a94f;
+}
+
+/* GRADE */
+
+.calendario-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.calendario-tabela {
+    width: 100%;
+    min-width: 650px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    background: white;
+}
+
+.calendario-tabela thead {
+    background: #172554;
+    color: white;
+}
+
+.calendario-tabela th {
+    padding: 15px 5px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.calendario-tabela td {
+    height: 125px;
+    padding: 9px;
+    vertical-align: top;
+    border: 1px solid #e5eaf2;
+    background: #fff;
+    transition: background 0.2s;
+}
+
+.calendario-tabela td:not(.dia-vazio):hover {
+    background: #f8faff;
+}
+
+.calendario-tabela .dia-vazio {
+    background: #f4f6fb;
+}
+
+/* NÚMERO DOS DIAS */
+
+.dia-numero {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.dia-numero span {
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.numero-hoje {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px;
+    height: 27px;
+    background: #d4a94f;
+    color: #172554 !important;
+    border-radius: 50%;
+}
+
+.calendario-tabela td.dia-hoje {
+    background: #fffbeb;
+    border: 2px solid #d4a94f;
+}
+
+/* EVENTOS */
+
+.eventos-dia {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.evento {
+    padding: 5px 6px;
+    border-radius: 5px;
+    font-size: 10px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.evento-tarefa {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-left: 3px solid #3b82f6;
+}
+
+.evento-prova {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-left: 3px solid #ef4444;
+}
+
+.evento span {
+    font-weight: 800;
+    margin-right: 3px;
+}
+
+/* RODAPÉ */
+
+.calendario-rodape {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+    padding: 15px;
+    background: #f9faff;
+    border-radius: 10px;
+    border-left: 4px solid #d4a94f;
+}
+
+.calendario-rodape span {
+    font-size: 22px;
+}
+
+.calendario-rodape p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 700px) {
+
+    .calendario-header {
+        justify-content: center;
+    }
+
+    .calendario-titulo {
+        order: -1;
+        width: 100%;
+    }
+
+    .calendario-tabela {
+        min-width: 650px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

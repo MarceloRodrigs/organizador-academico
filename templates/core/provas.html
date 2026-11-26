@@ -1,0 +1,351 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Minhas Provas | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📝 Minhas Provas</h2>
+    <p>Organize suas avaliações, acompanhe as datas e prepare-se para seus exames.</p>
+</section>
+
+<section class="activities">
+
+    <!-- CABEÇALHO -->
+
+    <div class="provas-header">
+
+        <div>
+            <h2>Minhas avaliações</h2>
+            <p>{{ provas|length }} prova(s) cadastrada(s)</p>
+        </div>
+
+        <a href="{% url 'cadastrar_prova' %}" class="btn-primary">
+            + Nova prova
+        </a>
+
+    </div>
+
+    <!-- LISTA DE PROVAS -->
+
+    <div class="provas-grid">
+
+        {% for prova in provas %}
+
+            <div class="card prova-card">
+
+                <div class="prova-topo">
+
+                    <div class="prova-icone">
+                        📝
+                    </div>
+
+                    <span class="prova-etiqueta">
+                        Avaliação
+                    </span>
+
+                </div>
+
+                <h3>{{ prova.titulo }}</h3>
+
+                <div class="prova-disciplina">
+                    📚 {{ prova.disciplina.nome }}
+                </div>
+
+                <div class="prova-data">
+
+                    <div>
+                        <span>📅 Data da prova</span>
+                        <strong>{{ prova.data_prova|date:"d/m/Y" }}</strong>
+                    </div>
+
+                    <div>
+                        <span>🕒 Horário</span>
+
+                        <strong>
+                            {% if prova.horario %}
+                                {{ prova.horario|time:"H:i" }}
+                            {% else %}
+                                Não informado
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="prova-conteudo">
+
+                    <span>📖 Conteúdo da avaliação</span>
+
+                    <p>
+                        {{ prova.descricao|default:"Nenhum conteúdo informado." }}
+                    </p>
+
+                </div>
+
+                <!-- AÇÕES -->
+
+                <div class="prova-acoes">
+
+                    <a href="{% url 'editar_prova' prova.id %}"
+                       class="prova-editar">
+                        ✎ Editar prova
+                    </a>
+
+                    <form method="POST" action="{% url 'excluir_prova' prova.id %}">
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="prova-excluir"
+                            onclick="return confirm('Tem certeza que deseja excluir esta prova?');"
+                        >
+                            Excluir
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="provas-vazio">
+
+                <div style="font-size: 45px; margin-bottom: 15px;">
+                    📝
+                </div>
+
+                <h3>Nenhuma prova cadastrada</h3>
+
+                <p>
+                    Adicione suas avaliações para acompanhar
+                    seus compromissos acadêmicos.
+                </p>
+
+                <a href="{% url 'cadastrar_prova' %}" class="btn-primary">
+                    + Cadastrar primeira prova
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<style>
+
+/* CABEÇALHO */
+
+.provas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.provas-header h2 {
+    margin-bottom: 5px;
+}
+
+.provas-header p {
+    color: #718096;
+    font-size: 13px;
+}
+
+/* GRADE */
+
+.provas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* CARD */
+
+.prova-card {
+    border-top: 4px solid #9333ea;
+    padding: 23px;
+}
+
+.prova-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.prova-icone {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3e8ff;
+    border-radius: 12px;
+    font-size: 22px;
+}
+
+.prova-etiqueta {
+    background: #f3e8ff;
+    color: #7e22ce;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.prova-card h3 {
+    color: #172554;
+    font-size: 19px;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+
+.prova-disciplina {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+/* DATA E HORÁRIO */
+
+.prova-data {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 15px 0;
+    border-top: 1px solid #e5e9f2;
+    border-bottom: 1px solid #e5e9f2;
+}
+
+.prova-data div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.prova-data span,
+.prova-conteudo span {
+    color: #718096;
+    font-size: 12px;
+}
+
+.prova-data strong {
+    color: #172554;
+    font-size: 14px;
+}
+
+/* CONTEÚDO */
+
+.prova-conteudo {
+    margin-top: 18px;
+    margin-bottom: 20px;
+}
+
+.prova-conteudo p {
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 8px;
+    overflow-wrap: anywhere;
+}
+
+/* AÇÕES */
+
+.prova-acoes {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.prova-acoes form {
+    margin: 0;
+}
+
+.prova-acoes button,
+.prova-acoes a {
+    display: inline-block;
+    padding: 10px 13px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.prova-editar {
+    background: #f5e7c5;
+    color: #172554;
+}
+
+.prova-editar:hover {
+    background: #d4a94f;
+}
+
+.prova-excluir {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.prova-excluir:hover {
+    background: #fecaca;
+}
+
+/* ESTADO VAZIO */
+
+.provas-vazio {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    background: #f9faff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 15px;
+}
+
+.provas-vazio h3 {
+    color: #172554;
+    margin-bottom: 10px;
+}
+
+.provas-vazio p {
+    color: #718096;
+    margin-bottom: 20px;
+}
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+
+    .provas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .prova-data {
+        grid-template-columns: 1fr;
+    }
+
+    .prova-acoes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .prova-acoes form,
+    .prova-acoes button,
+    .prova-acoes a {
+        width: 100%;
+        text-align: center;
+    }
+
+}
+
+</style>
+
+{% endblock %}

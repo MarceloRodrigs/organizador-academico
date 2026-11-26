@@ -1,0 +1,135 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Nova Prova | Organizador Acadêmico{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>📝 Cadastrar prova</h2>
+    <p>Organize suas avaliações e acompanhe as datas das provas.</p>
+</section>
+
+<section class="activities">
+
+    <div class="form-header">
+        <h3>Informações da avaliação</h3>
+        <p>Preencha os dados para registrar uma nova prova.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div>
+            <label for="titulo">Nome da prova</label>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                placeholder="Ex: Prova de Desenvolvimento Web"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="disciplina">Disciplina</label>
+            <select id="disciplina" name="disciplina" required>
+                <option value="">Selecione uma disciplina</option>
+
+                {% for disciplina in disciplinas %}
+                    <option value="{{ disciplina.id }}">
+                        {{ disciplina.nome }}
+                    </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <div>
+            <label for="data_prova">Data da prova</label>
+            <input
+                type="date"
+                id="data_prova"
+                name="data_prova"
+                required
+            >
+        </div>
+
+        <div>
+            <label for="horario">Horário</label>
+            <input
+                type="time"
+                id="horario"
+                name="horario"
+            >
+        </div>
+
+        <div>
+            <label for="descricao">Conteúdo da prova</label>
+            <textarea
+                id="descricao"
+                name="descricao"
+                rows="5"
+                placeholder="Informe os assuntos que serão cobrados..."
+            ></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                ✓ Salvar prova
+            </button>
+
+            <a href="{% url 'provas' %}" class="btn-secondary">
+                Voltar
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+<style>
+    .form-header {
+        margin-bottom: 28px;
+    }
+
+    .form-header h3 {
+        color: #172554;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        color: #718096;
+        font-size: 14px;
+    }
+
+    .activities form .form-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
+
+    .activities form .form-actions button,
+    .activities form .form-actions a {
+        margin: 0;
+        text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+        .activities form .form-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .activities form .form-actions button,
+        .activities form .form-actions a {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+{% endblock %}
